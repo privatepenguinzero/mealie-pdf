@@ -11,6 +11,9 @@ layout. Scanned PDFs work too, through the images only.
 A PDF page is never used as the recipe cover. If you upload a photo together
 with the PDF, the photo becomes the cover.
 
+The image also ships [Deno](https://deno.com), which yt-dlp needs to extract
+YouTube videos for the video recipe import.
+
 ## Image
 
 ```
