@@ -46,7 +46,7 @@ jobs:
             echo "Already built"
           fi
 
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.3
         if: steps.check.outputs.skip != 'true'
 
       - name: Mealie source with the document import
