@@ -1,42 +1,43 @@
 # mealie-pdf
 
-The official [Mealie](https://github.com/mealie-recipes/mealie) image with one
-addition: the "create recipe with AI" import also accepts PDF files.
+[Mealie](https://github.com/mealie-recipes/mealie) built from the latest
+release with one addition: the "create recipe with AI" import also accepts
+documents (PDF, Word `.docx`, OpenDocument `.odt`, Markdown, plain text, RTF
+and HTML).
 
-Each PDF page is rendered to an image, and the PDF text layer (when there is
-one) is sent along with the images. The text keeps quantities from tables
-that the model tends to drop when it only sees the page; the images keep the
-layout. Scanned PDFs work too, through the images only.
+The feature comes from
+[mealie-recipes/mealie#8536](https://github.com/mealie-recipes/mealie/pull/8536)
+by bferd. This repository only applies that pull request on top of each
+Mealie release until it is merged upstream.
 
-A PDF page is never used as the recipe cover. If you upload a photo together
-with the PDF, the photo becomes the cover.
-
-The image also ships [Deno](https://deno.com), which yt-dlp needs to extract
-YouTube videos for the video recipe import.
+The image also ships [Deno](https://deno.com) and `yt-dlp-ejs`, which yt-dlp
+needs to extract YouTube videos for the video recipe import.
 
 ## Image
 
 ```
 ghcr.io/privatepenguinzero/mealie-pdf:latest
-ghcr.io/privatepenguinzero/mealie-pdf:<mealie version>   # e.g. v3.30.0
+ghcr.io/privatepenguinzero/mealie-pdf:<mealie version>          # e.g. v3.31.0
+ghcr.io/privatepenguinzero/mealie-pdf:<mealie version>-pr<sha>  # exact PR commit
 ```
 
 Drop-in replacement for `ghcr.io/mealie-recipes/mealie`. Same volumes and
-environment. Optional:
-
-| Variable | Default | |
-|---|---|---|
-| `MEALIE_PDF_MAX_PAGES` | `10` | pages read from each PDF |
-| `MEALIE_PDF_DPI` | `150` | render resolution |
+environment.
 
 ## How it's built
 
-`patch.py` makes three small edits to `ai_recipe_service.py` and widens the
-file filter of the AI import upload button. Each edit has to match exactly
-once, so when upstream changes that code the build fails instead of
-producing a broken image. The previous tag stays available.
+`prepare.sh` checks out the Mealie release, applies the pull request diff
+(without `pyproject.toml` and `uv.lock`, which change in every release), adds
+the four new dependencies again with `uv`, and appends the video import
+extras to Mealie's own `docker/Dockerfile`. The image is then built from that
+tree with the upstream Dockerfile.
 
-A daily workflow checks for new Mealie releases and builds them.
+If the diff no longer applies, the build fails and the previous tag stays
+available. If a release already contains the feature, nothing is applied:
+at that point the official image is enough.
+
+A daily workflow builds new Mealie releases and new commits of the pull
+request.
 
 ## License
 
